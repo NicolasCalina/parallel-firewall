@@ -1,0 +1,86 @@
+make -C ../src clean
+make[1]: Entering directory '/home/nicolas/SO/teme/parallel-firewall/src'
+rm -f ring_buffer.o producer.o consumer.o packet.o ../utils/log/log.o serial.o firewall.o
+rm -f firewall serial
+make[1]: Leaving directory '/home/nicolas/SO/teme/parallel-firewall/src'
+rm -f *~
+rm -rf __pycache__
+rm -rf out
+make -i SRC_PATH=../src
+make[1]: Entering directory '/home/nicolas/SO/teme/parallel-firewall/tests'
+make -C ../src UTILS_PATH=/home/nicolas/SO/teme/parallel-firewall/utils
+make[2]: Entering directory '/home/nicolas/SO/teme/parallel-firewall/src'
+cc -Wall -Wextra -ggdb -O0 -I/home/nicolas/SO/teme/parallel-firewall/utils  -c -o ring_buffer.o ring_buffer.c
+ring_buffer.c: In function ‘ring_buffer_init’:
+ring_buffer.c:9:18: warning: implicit declaration of function ‘malloc’ [-Wimplicit-function-declaration]
+    9 |     ring->data = malloc(capacity);
+      |                  ^~~~~~
+ring_buffer.c:7:1: note: include ‘<stdlib.h>’ or provide a declaration of ‘malloc’
+    6 | #include "ring_buffer.h"
+  +++ |+#include <stdlib.h>
+    7 | 
+ring_buffer.c:9:18: warning: incompatible implicit declaration of built-in function ‘malloc’ [-Wbuiltin-declaration-mismatch]
+    9 |     ring->data = malloc(capacity);
+      |                  ^~~~~~
+ring_buffer.c:9:18: note: include ‘<stdlib.h>’ or provide a declaration of ‘malloc’
+ring_buffer.c: In function ‘ring_buffer_destroy’:
+ring_buffer.c:25:5: warning: implicit declaration of function ‘free’ [-Wimplicit-function-declaration]
+   25 |     free(ring->data);
+      |     ^~~~
+ring_buffer.c:25:5: note: include ‘<stdlib.h>’ or provide a declaration of ‘free’
+ring_buffer.c:25:5: warning: incompatible implicit declaration of built-in function ‘free’ [-Wbuiltin-declaration-mismatch]
+ring_buffer.c:25:5: note: include ‘<stdlib.h>’ or provide a declaration of ‘free’
+cc -Wall -Wextra -ggdb -O0 -I/home/nicolas/SO/teme/parallel-firewall/utils  -c -o producer.o producer.c
+cc -Wall -Wextra -ggdb -O0 -I/home/nicolas/SO/teme/parallel-firewall/utils  -c -o consumer.o consumer.c
+consumer.c: In function ‘create_consumers’:
+consumer.c:39:40: warning: passing argument 3 of ‘pthread_create’ from incompatible pointer type [-Wincompatible-pointer-types]
+   39 |         pthread_create(&tids[i], NULL, &consumer_thread, ctx);
+      |                                        ^~~~~~~~~~~~~~~~
+      |                                        |
+      |                                        void (*)(so_consumer_ctx_t *)
+In file included from consumer.c:3:
+/usr/include/pthread.h:204:36: note: expected ‘void * (*)(void *)’ but argument is of type ‘void (*)(so_consumer_ctx_t *)’
+  204 |                            void *(*__start_routine) (void *),
+      |                            ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+cc -Wall -Wextra -ggdb -O0 -I/home/nicolas/SO/teme/parallel-firewall/utils  -c -o packet.o packet.c
+cc -I/home/nicolas/SO/teme/parallel-firewall/utils -Wall -Wextra -ggdb -O0 -c -o /home/nicolas/SO/teme/parallel-firewall/utils/log/log.o  /home/nicolas/SO/teme/parallel-firewall/utils/log/log.c
+cc -Wall -Wextra -ggdb -O0 -I/home/nicolas/SO/teme/parallel-firewall/utils  -c -o firewall.o firewall.c
+cc -I/home/nicolas/SO/teme/parallel-firewall/utils -Wall -Wextra -ggdb -O0 -o firewall ring_buffer.o producer.o consumer.o packet.o /home/nicolas/SO/teme/parallel-firewall/utils/log/log.o firewall.o -lpthread
+cc -Wall -Wextra -ggdb -O0 -I/home/nicolas/SO/teme/parallel-firewall/utils  -c -o serial.o serial.c
+cc -I/home/nicolas/SO/teme/parallel-firewall/utils -Wall -Wextra -ggdb -O0 -o serial ring_buffer.o producer.o consumer.o packet.o /home/nicolas/SO/teme/parallel-firewall/utils/log/log.o serial.o -lpthread
+make[2]: Leaving directory '/home/nicolas/SO/teme/parallel-firewall/src'
+make[1]: Leaving directory '/home/nicolas/SO/teme/parallel-firewall/tests'
+SRC_PATH=../src python3 checker.py
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Skipping test generation ~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Running tests ... ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Test [    10 packets, sort False, 1 thread ] ...................... passed ... 3
+Test [ 1,000 packets, sort False, 1 thread ] ...................... passed ... 3
+Test [10,000 packets, sort False, 1 thread ] ...................... passed ... 2
+Test [20,000 packets, sort False, 1 thread ] ...................... passed ... 2
+Test [    10 packets, sort True , 2 threads] ...................... passed ... 5
+Test [    10 packets, sort True , 4 threads] ...................... passed ... 5
+Test [   100 packets, sort True , 2 threads] ...................... passed ... 5
+Test [   100 packets, sort True , 4 threads] ...................... passed ... 5
+Test [ 1,000 packets, sort True , 2 threads] ...................... passed ... 5
+Test [ 1,000 packets, sort True , 4 threads] ...................... passed ... 5
+Test [10,000 packets, sort True , 2 threads] ...................... passed ... 5
+Test [10,000 packets, sort True , 4 threads] ...................... passed ... 5
+Test [20,000 packets, sort True , 2 threads] ...................... passed ... 5
+Test (20000 packets, 4 threads) took 233290.84410000005 us, Test (20000 packets, 2 threads) took 235935.27109999995 us with a speedup of 0.011335322696446569 which is below 0.2
+Test [20,000 packets, sort True , 4 threads] ...................... failed ... 0
+Test (1000 packets, 2 threads) took 24010.690000000002 us, Test (1000 packets, 1 threads) took 22296.628 us with a speedup of -0.07138745283871482 which is below 0.2
+Test [ 1,000 packets, sort False, 2 threads] ...................... failed ... 0
+Log tracing failed: file ref/test_1_000.ref does notstart with the contents of out/test_1_000.out.
+Test [ 1,000 packets, sort False, 4 threads] ...................... failed ... 0
+Log tracing failed: file ref/test_10_000.ref does notstart with the contents of out/test_10_000.out.
+Test [10,000 packets, sort False, 2 threads] ...................... failed ... 0
+Log tracing failed: file ref/test_10_000.ref does notstart with the contents of out/test_10_000.out.
+Test [10,000 packets, sort False, 4 threads] ...................... failed ... 0
+Log tracing failed: file ref/test_20_000.ref does notstart with the contents of out/test_20_000.out.
+Test [20,000 packets, sort False, 2 threads] ...................... failed ... 0
+Log tracing failed: file ref/test_20_000.ref does notstart with the contents of out/test_20_000.out.
+Test [20,000 packets, sort False, 4 threads] ...................... failed ... 0
+
+Checker:                                                                    55/100

@@ -5,6 +5,9 @@
 
 #include <sys/types.h>
 #include <string.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <stdatomic.h>
 
 typedef struct so_ring_buffer_t {
 	char *data;
@@ -14,14 +17,22 @@ typedef struct so_ring_buffer_t {
 
 	size_t len;
 	size_t cap;
-
+	
 	/* TODO: Add syncronization primitives */
+
+	pthread_mutex_t rb_mutex;
+
+	sem_t semFull;
+	sem_t semEmpty;
+
+	atomic_int producer_done;
+
 } so_ring_buffer_t;
 
 int     ring_buffer_init(so_ring_buffer_t *rb, size_t cap);
 ssize_t ring_buffer_enqueue(so_ring_buffer_t *rb, void *data, size_t size);
 ssize_t ring_buffer_dequeue(so_ring_buffer_t *rb, void *data, size_t size);
 void    ring_buffer_destroy(so_ring_buffer_t *rb);
-void    ring_buffer_stop(so_ring_buffer_t *rb);
+void    ring_buffer_stop(so_ring_buffer_t *rb, int num_consumers);
 
 #endif /* __SO_RINGBUFFER_H__ */

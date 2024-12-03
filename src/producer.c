@@ -9,21 +9,22 @@
 #include "utils.h"
 #include "producer.h"
 
-void publish_data(so_ring_buffer_t *rb, const char *filename)
+void publish_data(so_ring_buffer_t *rb, const char *filename, int num_consumers)
 {
-	char buffer[PKT_SZ];
-	ssize_t sz;
-	int fd;
+    char buffer[PKT_SZ];
+    ssize_t sz;
+    int fd;
 
-	fd = open(filename, O_RDONLY);
-	DIE(fd < 0, "open");
+    fd = open(filename, O_RDONLY);
+    DIE(fd < 0, "open");
+    while ((sz = read(fd, buffer, PKT_SZ)) != 0) {
+        DIE(sz != PKT_SZ, "packet truncated");
 
-	while ((sz = read(fd, buffer, PKT_SZ)) != 0) {
-		DIE(sz != PKT_SZ, "packet truncated");
+        /* enqueue packet into ring buffer */
+        ring_buffer_enqueue(rb, buffer, sz);
+    }
+	
+    ring_buffer_stop(rb, num_consumers);
 
-		/* enequeue packet into ring buffer */
-		ring_buffer_enqueue(rb, buffer, sz);
-	}
-
-	ring_buffer_stop(rb);
+    close(fd);
 }

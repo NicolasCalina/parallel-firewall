@@ -1,0 +1,27 @@
+cd ../src/.. && checkpatch.pl -f src/*.c
+/bin/sh: 1: checkpatch.pl: not found
+make: [Makefile:16: lint] Error 127 (ignored)
+cd ../src/.. && cpplint --recursive src/
+src/consumer.c:16:  Line ends in whitespace.  Consider deleting these extra spaces.  [whitespace/end_of_line] [4]
+src/consumer.c:17:  Redundant blank line at the start of a code block should be deleted.  [whitespace/blank_line] [2]
+src/consumer.c:43:  Could not find a newline character at the end of the file.  [whitespace/ending_newline] [5]
+src/producer.c:26:  Line ends in whitespace.  Consider deleting these extra spaces.  [whitespace/end_of_line] [4]
+src/ring_buffer.c:34:  Line ends in whitespace.  Consider deleting these extra spaces.  [whitespace/end_of_line] [4]
+src/ring_buffer.c:83:  Could not find a newline character at the end of the file.  [whitespace/ending_newline] [5]
+src/ring_buffer.h:20:  Line ends in whitespace.  Consider deleting these extra spaces.  [whitespace/end_of_line] [4]
+src/ring_buffer.h:29:  Redundant blank line at the end of a code block should be deleted.  [whitespace/blank_line] [3]
+Done processing src/consumer.c
+Done processing src/consumer.h
+Done processing src/firewall.c
+Done processing src/packet.c
+Done processing src/packet.h
+Done processing src/producer.c
+Done processing src/producer.h
+Done processing src/ring_buffer.c
+Done processing src/ring_buffer.h
+Done processing src/serial.c
+Total errors found: 8
+make: [Makefile:17: lint] Error 1 (ignored)
+cd ../src/.. && shellcheck tests/*.sh
+# All tests/*.py are checker related
+# -cd ../src/.. && pylint tests/*.py

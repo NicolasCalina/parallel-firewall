@@ -66,11 +66,15 @@ int main(int argc, char **argv)
 	threads = create_consumers(thread_ids, num_consumers, &ring_buffer, argv[2]);
 
 	/* start publishing data */
-	publish_data(&ring_buffer, argv[1]);
+	publish_data(&ring_buffer, argv[1], num_consumers);
 
-	/* TODO: wait for child threads to finish execution*/
-	(void) threads;
+	for (int i = 0; i < threads; i++) {
+    if (pthread_join(thread_ids[i], NULL) != 0) {
+        fprintf(stderr, "error\n");
+    	}
+	}
 
+	ring_buffer_destroy(&ring_buffer);
 	free(thread_ids);
 
 	return 0;
