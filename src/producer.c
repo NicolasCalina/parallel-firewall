@@ -15,6 +15,7 @@ void publish_data(so_ring_buffer_t *rb, const char *filename, int num_consumers)
     ssize_t sz;
     int fd;
 
+
     fd = open(filename, O_RDONLY);
     DIE(fd < 0, "open");
     while ((sz = read(fd, buffer, PKT_SZ)) != 0) {

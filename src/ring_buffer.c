@@ -39,7 +39,6 @@ ssize_t ring_buffer_enqueue(so_ring_buffer_t *ring, void *data, size_t size ) {
     if (ring->write_pos >= ring->cap) {
         ring->write_pos %= ring->cap;
     }
-	//printf("Enqueued packet, write_pos: %zu, len: %zu\n", ring->write_pos, ring->len);
 
     pthread_mutex_unlock(&ring->rb_mutex);
     sem_post(&ring->semFull);
@@ -65,8 +64,6 @@ ssize_t ring_buffer_dequeue(so_ring_buffer_t *ring, void *data, size_t size) {
     if (ring->read_pos >= ring->cap) {
         ring->read_pos %= ring->cap;
     }
-
-	//printf("Dequeued packet, read_pos: %zu, len: %zu\n", ring->read_pos, ring->len);
 
     pthread_mutex_unlock(&ring->rb_mutex);
     sem_post(&ring->semEmpty);
